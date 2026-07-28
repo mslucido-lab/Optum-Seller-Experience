@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optum AI Marketplace — Seller Intake Form</title>
+<style>
+/* ── Tokens (matches seller_experience_v2_1.html) ─────────────────── */
+:root {
+  --navy:        #0d0f1c;
+  --navy-mid:    #12152a;
+  --navy-card:   #181c30;
+  --navy-row:    #1e2236;
+  --navy-hover:  #232840;
+  --border:      #2a2e45;
+  --border-lt:   #3a3f58;
+  --optum-orange:#f68b1e;
+  --orange-dim:  rgba(246,139,30,.12);
+  --text-primary:#f0f1f5;
+  --text-body:   #c8cad8;
+  --text-muted:  #8890a8;
+  --text-subtle: #565d7a;
+  --green:       #22c55e;
+  --green-dim:   rgba(34,197,94,.14);
+  --yellow:      #f59e0b;
+  --yellow-dim:  rgba(245,158,11,.14);
+  --red:         #ef4444;
+  --red-dim:     rgba(239,68,68,.14);
+  --blue:        #60a5fa;
+  --blue-dim:    rgba(96,165,250,.14);
+  --purple:      #a78bfa;
+  --purple-dim:  rgba(167,139,250,.14);
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --nav-h: 54px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--navy); color: var(--text-body); font-size: 14px; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Top nav (reused) ───────────────────────────────────────────── */
+.topnav {
+  height: var(--nav-h); background: #0a0c19; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 28px; flex-shrink: 0;
+  position: sticky; top: 0; z-index: 200;
+}
+.logo-optum { font-size: 18px; font-weight: 800; color: var(--optum-orange); letter-spacing: -0.5px; }
+.logo-marketplace { font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.2px; margin-left: 10px; }
+.topnav-spacer { flex: 1; }
+.nav-signout { font-size: 13px; color: var(--text-muted); cursor: pointer; }
+.nav-signout:hover { color: var(--text-primary); }
+
+.breadcrumb {
+  padding: 10px 28px; font-size: 12px; color: var(--text-subtle);
+  display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border);
+}
+.breadcrumb a { color: var(--blue); cursor: pointer; text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb-sep { color: var(--text-subtle); font-size: 10px; }
+.breadcrumb-current { color: var(--text-body); }
+
+/* ── Page header ────────────────────────────────────────────────── */
+.page-header { padding: 22px 28px 18px; border-bottom: 1px solid var(--border); }
+.page-header-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.page-title { font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.4px; }
+.page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.reference-link {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--blue);
+  text-decoration: none; padding: 6px 12px; border: 1px solid var(--border); border-radius: 99px;
+  transition: all .12s;
+}
+.reference-link:hover { border-color: var(--border-lt); background: var(--navy-hover); }
+
+/* ── Workflow stepper ───────────────────────────────────────────── */
+.workflow-strip {
+  display: flex; align-items: stretch; gap: 0; margin-top: 18px;
+  background: var(--navy-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.workflow-step {
+  flex: 1; padding: 10px 14px; font-size: 11px; color: var(--text-muted); position: relative;
+  border-right: 1px solid var(--border); text-align: center;
+}
+.workflow-step:last-child { border-right: none; }
+.workflow-step.current { background: var(--orange-dim); color: var(--optum-orange); font-weight: 700; }
+.workflow-step-owner { display: block; font-size: 10px; color: var(--text-subtle); margin-top: 2px; }
+.workflow-step.current .workflow-step-owner { color: var(--optum-orange); opacity: .8; }
+
+/* ── Body layout ────────────────────────────────────────────────── */
+.form-body { flex: 1; display: flex; }
+
+/* ── Section nav ────────────────────────────────────────────────── */
+.section-nav {
+  width: 250px; flex-shrink: 0; border-right: 1px solid var(--border);
+  padding: 18px 0; align-self: flex-start; position: sticky; top: var(--nav-h);
+  max-height: calc(100vh - var(--nav-h)); overflow-y: auto;
+}
+.section-nav-progress {
+  margin: 0 18px 14px; padding: 10px 12px; background: var(--navy-card); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.section-nav-progress-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.section-nav-progress-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.section-nav-progress-fill { height: 100%; background: var(--optum-orange); border-radius: 3px; width: 0%; transition: width .2s; }
+.section-nav-list { list-style: none; }
+.section-nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 18px; font-size: 12.5px; color: var(--text-muted);
+  cursor: pointer; border-left: 2px solid transparent; transition: all .1s;
+}
+.section-nav-item:hover { background: var(--navy-hover); color: var(--text-body); }
+.section-nav-item.active { color: var(--text-primary); border-left-color: var(--optum-orange); background: var(--orange-dim); font-weight: 600; }
+.section-nav-num {
+  width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border-lt);
+  display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; color: var(--text-subtle);
+}
+.section-nav-item.active .section-nav-num { border-color: var(--optum-orange); color: var(--optum-orange); }
+.section-nav-item.done .section-nav-num { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+
+/* ── Main form area ─────────────────────────────────────────────── */
+.form-main { flex: 1; min-width: 0; padding: 24px 28px 120px; max-width: 900px; }
+
+.form-card { background: var(--navy-card); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 20px; scroll-margin-top: calc(var(--nav-h) + 16px); }
+.form-card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.form-card-title-wrap { display: flex; align-items: center; gap: 10px; }
+.form-card-num {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--orange-dim); color: var(--optum-orange);
+  font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.form-card-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.form-card-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.owner-badge {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  padding: 3px 9px; border-radius: 99px; white-space: nowrap;
+}
+.owner-badge.owner-owner { background: var(--blue-dim); color: var(--blue); }
+.owner-badge.owner-marketing { background: var(--purple-dim); color: var(--purple); }
+.owner-badge.owner-seo { background: var(--yellow-dim); color: var(--yellow); }
+.owner-badge.owner-dev { background: var(--green-dim); color: var(--green); }
+.form-card-body { padding: 18px 20px 20px; }
+
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { margin-bottom: 16px; }
+.field.full { grid-column: 1 / -1; }
+.field-label { display: flex; align-items: baseline; justify-content: space-between; font-size: 12.5px; font-weight: 600; color: var(--text-body); margin-bottom: 6px; }
+.field-label .req { color: var(--optum-orange); margin-left: 3px; }
+.field-hint { font-size: 11px; color: var(--text-subtle); font-weight: 400; }
+.field input[type="text"], .field input[type="url"], .field input[type="date"], .field textarea, .field select {
+  width: 100%; background: var(--navy-row); border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--text-primary); font-family: var(--font); font-size: 13px; padding: 9px 12px; outline: none;
+  transition: border-color .12s;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--optum-orange); }
+.field input::placeholder, .field textarea::placeholder { color: var(--text-subtle); }
+.field textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+.char-counter { font-size: 11px; color: var(--text-subtle); text-align: right; margin-top: 4px; }
+.char-counter.over { color: var(--red); }
+
+.choice-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice-pill {
+  display: flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 99px;
+  border: 1px solid var(--border); background: var(--navy-row); font-size: 12.5px; color: var(--text-body);
+  cursor: pointer; transition: all .1s;
+}
+.choice-pill:hover { border-color: var(--border-lt); }
+.choice-pill input { accent-color: var(--optum-orange); margin: 0; }
+.choice-pill.checked { border-color: rgba(246,139,30,.4); background: var(--orange-dim); color: var(--optum-orange); }
+
+.section-divider { height: 1px; background: var(--border); margin: 18px 0; }
+.subsection-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); margin-bottom: 10px; }
+
+/* ── Repeatable rows ────────────────────────────────────────────── */
+.repeat-row {
+  background: var(--navy-row); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 12px; position: relative;
+}
+.repeat-row-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.repeat-row-label { font-size: 11px; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; letter-spacing: .5px; }
+.repeat-remove {
+  color: var(--text-subtle); cursor: pointer; font-size: 13px; padding: 2px 8px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: transparent;
+}
+.repeat-remove:hover { color: var(--red); border-color: rgba(239,68,68,.4); background: var(--red-dim); }
+.repeat-add-btn {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--optum-orange);
+  background: var(--orange-dim); border: 1px dashed rgba(246,139,30,.4); border-radius: var(--radius);
+  padding: 9px 14px; cursor: pointer; width: 100%; justify-content: center; transition: all .12s;
+}
+.repeat-add-btn:hover { background: rgba(246,139,30,.2); }
+.repeat-add-btn:disabled { opacity: .4; cursor: not-allowed; }
+.repeat-limit-note { font-size: 11px; color: var(--text-subtle); margin-top: 6px; text-align: center; }
+
+/* ── File / image drop ──────────────────────────────────────────── */
+.file-drop {
+  border: 1px dashed var(--border-lt); border-radius: var(--radius); padding: 18px; text-align: center;
+  color: var(--text-subtle); font-size: 12.5px; background: var(--navy-row); cursor: pointer; transition: all .12s;
+}
+.file-drop:hover { border-color: var(--optum-orange); color: var(--text-body); }
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; cursor: pointer; border: none; line-height: 1; transition: all .12s; white-space: nowrap;
+}
+.btn-primary { background: var(--optum-orange); color: #fff; }
+.btn-primary:hover { background: #d9741a; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-body); }
+.btn-ghost:hover { border-color: var(--border-lt); color: var(--text-primary); }
+
+/* ── Sticky action bar ──────────────────────────────────────────── */
+.sticky-actions {
+  position: sticky; bottom: 0; left: 0; right: 0; background: rgba(10,12,25,.92); backdrop-filter: blur(6px);
+  border-top: 1px solid var(--border); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+  z-index: 150; margin-top: auto;
+}
+.sticky-actions-meta { font-size: 12px; color: var(--text-subtle); }
+.sticky-actions-buttons { display: flex; gap: 10px; }
+
+/* ── Toast ──────────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 84px; right: 24px; background: var(--navy-card); border: 1px solid var(--border);
+  color: var(--text-primary); padding: 11px 18px; border-radius: var(--radius-lg); font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow); z-index: 999; transform: translateY(60px); opacity: 0; transition: all .22s ease; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+@media (max-width: 900px) {
+  .section-nav { display: none; }
+  .field-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOP NAV ══════════════════════════════════════════════════ -->
+<nav class="topnav">
+  <span class="logo-optum">Optum</span><span class="logo-marketplace">AI Marketplace</span>
+  <div class="topnav-spacer"></div>
+  <span class="nav-signout">Sign out</span>
+</nav>
+
+<div class="breadcrumb">
+  <a>Home</a><span class="breadcrumb-sep">›</span>
+  <a>Operations</a><span class="breadcrumb-sep">›</span>
+  <a>Intake Forms</a><span class="breadcrumb-sep">›</span>
+  <span class="breadcrumb-current">New Intake</span>
+</div>
+
+<!-- ══ PAGE HEADER ══════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-top">
+    <div>
+      <div class="page-title">Seller Intake Form — PDP Content Submission</div>
+      <div class="page-subtitle">Complete all required fields to submit product content for a new AI Marketplace product detail page (~10-day SLA).</div>
+    </div>
+    <a class="reference-link" href="https://marketplace.optum.com/products/eligibility_and_claims/enhanced_eligibility" target="_blank" rel="noopener">
+      ↗ View a published PDP example (Enhanced Eligibility API)
+    </a>
+  </div>
+
+  <div class="workflow-strip">
+    <div class="workflow-step current">Initiation &amp; Intake<span class="workflow-step-owner">Product Owner</span></div>
+    <div class="workflow-step">Content Development<span class="workflow-step-owner">Marketing / Owner</span></div>
+    <div class="workflow-step">Review &amp; Proofing<span class="workflow-step-owner">Product Marketing</span></div>
+    <div class="workflow-step">Marketing &amp; Compliance<span class="workflow-step-owner">AIM Product Marketing</span></div>
+    <div class="workflow-step">Tech &amp; Dev Coordination<span class="workflow-step-owner">Development / Product</span></div>
+    <div class="workflow-step">Campaign &amp; Launch<span class="workflow-step-owner">AIM Product Marketing</span></div>
+    <div class="workflow-step">Post-Launch Monitoring<span class="workflow-step-owner">AIM Product Marketing</span></div>
+  </div>
+</div>
+
+<!-- ══ BODY ═════════════════════════════════════════════════════ -->
+<div class="form-body">
+
+  <!-- ── Section nav ─────────────────────────────────────────── -->
+  <aside class="section-nav" id="sectionNav">
+    <div class="section-nav-progress">
+      <div class="section-nav-progress-label"><span>Form completion</span><span id="progressPct">0%</span></div>
+      <div class="section-nav-progress-bar"><div class="section-nav-progress-fill" id="progressFill"></div></div>
+    </div>
+    <ul class="section-nav-list" id="sectionNavList">
+      <li class="section-nav-item" data-target="sec1"><span class="section-nav-num">1</span> General Information</li>
+      <li class="section-nav-item" data-target="sec2"><span class="section-nav-num">2</span> Technical &amp; Business Details</li>
+      <li class="section-nav-item" data-target="sec3"><span class="section-nav-num">3</span> AI &amp; Page Classification</li>
+      <li class="section-nav-item" data-target="sec4"><span class="section-nav-num">4</span> Product Details</li>
+      <li class="section-nav-item" data-target="sec5"><span class="section-nav-num">5</span> SEO</li>
+      <li class="section-nav-item" data-target="sec6"><span class="section-nav-num">6</span> Web Page Content</li>
+      <li class="section-nav-item" data-target="sec7"><span class="section-nav-num">7</span> Benefits</li>
+      <li class="section-nav-item" data-target="sec8"><span class="section-nav-num">8</span> Video</li>
+      <li class="section-nav-item" data-target="sec9"><span class="section-nav-num">9</span> Modules</li>
+      <li class="section-nav-item" data-target="sec10"><span class="section-nav-num">10</span> Related Resources</li>
+      <li class="section-nav-item" data-target="sec11"><span class="section-nav-num">11</span> FAQs</li>
+      <li class="section-nav-item" data-target="sec12"><span class="section-nav-num">12</span> Featured &amp; Navigation</li>
+      <li class="section-nav-item" data-target="sec13"><span class="section-nav-num">13</span> Chatbot Prompts</li>
+      <li class="section-nav-item" data-target="sec14"><span class="section-nav-num">14</span> Developer Resources</li>
+    </ul>
+  </aside>
+
+  <!-- ── Main form ───────────────────────────────────────────── -->
+  <main class="form-main">
+
+    <!-- Section 1 -->
+    <section class="form-card" id="sec1">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">1</div>
+          <div><div class="form-card-title">General Information</div><div class="form-card-sub">Confirm product eligibility and basic ownership details</div></div>
+        </div>
+        <span class="owner-badge owner-owner">Product Owner</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Submitter Name &amp; Date<span class="req">*</span></label><input type="text" value="Peter C and Terri, Coding Intelligence Team"></div>
+          <div class="field"><label class="field-label">Go-Live Date</label><input type="text" value="Feb 2026" placeholder="e.g. Q1 2026 or MM/DD/YYYY"></div>
+          <div class="field"><label class="field-label">Product Name<span class="req">*</span></label><input type="text" value="CPT® Data Licensing for Practice Fusion &amp; Veradigm® Systems"></div>
+          <div class="field"><label class="field-label">Business Unit<span class="req">*</span></label><input type="text" value="Optum Coding"></div>
+          <div class="field"><label class="field-label">Product Owner / SME</label><input type="text" placeholder="Name of product owner or subject matter expert"></div>
+          <div class="field"><label class="field-label">Marketing Page Owner</label><input type="text" value="Peter C and Terri, Coding Intelligence Team"></div>
+          <div class="field full"><label class="field-label">Developer Contact(s)<span class="field-hint">For technical writing or developer portal support</span></label><input type="text" placeholder="Name(s) and contact info"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section class="form-card" id="sec2">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">2</div>
+          <div><div class="form-card-title">Technical &amp; Business Details</div><div class="form-card-sub">Internal tracking identifiers and reference pages</div></div>
+        </div>
+        <span class="owner-badge owner-owner">Product Owner</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Accelerate ID</label><input type="text" placeholder="Accelerate ID"></div>
+          <div class="field"><label class="field-label">CPL / MLRB #</label><input type="text" placeholder="CPL number"></div>
+          <div class="field"><label class="field-label">TCV or Revenue Goal</label><input type="text" value="$72M"></div>
+          <div class="field"><label class="field-label">PIM Code / AIM GL</label><input type="text" placeholder="Internal identifiers"></div>
+          <div class="field full"><label class="field-label">Sample AIM Page to Replicate</label><input type="url" value="https://www.optumcoding.com/data-and-web-services/cpt-data-allscriptssystems/"></div>
+          <div class="field full"><label class="field-label">.com Pages (if applicable)</label><input type="url" value="https://www.optumcoding.com/data-and-web-services/cpt-data-allscriptssystems/"></div>
+          <div class="field full"><label class="field-label">Supporting Sites</label><textarea>Online annual license renewal and customer service support for CPT® Standard Data File ordering</textarea></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section class="form-card" id="sec3">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">3</div>
+          <div><div class="form-card-title">AI &amp; Page Classification</div><div class="form-card-sub">Click all that apply</div></div>
+        </div>
+        <span class="owner-badge owner-owner">Product Owner</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field full">
+          <label class="field-label">Does this have AI?<span class="req">*</span></label>
+          <div class="choice-group" data-radio-group="hasAI">
+            <label class="choice-pill"><input type="radio" name="hasAI"> Yes</label>
+            <label class="choice-pill checked"><input type="radio" name="hasAI" checked> No</label>
+            <label class="choice-pill"><input type="radio" name="hasAI"> Uncertain</label>
+          </div>
+        </div>
+        <div class="field full">
+          <label class="field-label">Explain AI relevance (or why it does not apply)</label>
+          <textarea>This page describes CPT® data licensing and annual renewal requirements for Practice Fusion and Veradigm® systems. No AI-specific capability is described.</textarea>
+        </div>
+        <div class="field full">
+          <label class="field-label">Type of AI <span class="field-hint">(if applicable)</span></label>
+          <div class="choice-group">
+            <label class="choice-pill"><input type="checkbox"> Generative</label>
+            <label class="choice-pill"><input type="checkbox"> AI/ML</label>
+            <label class="choice-pill"><input type="checkbox"> ML</label>
+            <label class="choice-pill"><input type="checkbox"> AI-enabled</label>
+            <label class="choice-pill"><input type="checkbox"> Other</label>
+          </div>
+        </div>
+        <div class="field full"><label class="field-label">Describe how AI works within the product</label><textarea placeholder="Describe how AI works within the product"></textarea></div>
+        <div class="field full">
+          <label class="field-label">Type of Page<span class="req">*</span></label>
+          <div class="choice-group" data-radio-group="pageType">
+            <label class="choice-pill"><input type="radio" name="pageType"> Tech</label>
+            <label class="choice-pill"><input type="radio" name="pageType"> Marketplace</label>
+            <label class="choice-pill checked"><input type="radio" name="pageType" checked> Product (PDP)</label>
+            <label class="choice-pill"><input type="radio" name="pageType"> Campaign Landing Page</label>
+          </div>
+        </div>
+        <div class="field full">
+          <label class="field-label">Target Audience</label>
+          <div class="choice-group">
+            <label class="choice-pill"><input type="checkbox"> Developer</label>
+            <label class="choice-pill"><input type="checkbox"> Payer</label>
+            <label class="choice-pill checked"><input type="checkbox" checked> Provider</label>
+            <label class="choice-pill checked"><input type="checkbox" checked> Vendor</label>
+          </div>
+        </div>
+        <div class="field"><label class="field-label">Segment Size<span class="field-hint">Optional</span></label><input type="text" placeholder="Optional: estimated audience size"></div>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section class="form-card" id="sec4">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">4</div>
+          <div><div class="form-card-title">Product Details</div><div class="form-card-sub">Category, type, and purchasability</div></div>
+        </div>
+        <span class="owner-badge owner-owner">Product Owner</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field full">
+          <label class="field-label">Primary Category<span class="req">*</span></label>
+          <div class="choice-group">
+            <label class="choice-pill"><input type="checkbox"> Analytics and insights</label>
+            <label class="choice-pill"><input type="checkbox"> Care operations and management</label>
+            <label class="choice-pill checked"><input type="checkbox" checked> Data access and interoperability</label>
+            <label class="choice-pill"><input type="checkbox"> Eligibility and claims</label>
+            <label class="choice-pill"><input type="checkbox"> Patient and member engagement</label>
+            <label class="choice-pill"><input type="checkbox"> Payment and reimbursement</label>
+            <label class="choice-pill"><input type="checkbox"> Other</label>
+          </div>
+        </div>
+        <div class="field full"><label class="field-label">If Primary Category is "Other", describe</label><input type="text" value="N/A"></div>
+        <div class="section-divider"></div>
+        <div class="field full">
+          <label class="field-label">Secondary / Navigation Category</label>
+          <div class="choice-group">
+            <label class="choice-pill checked"><input type="checkbox" checked> Care operations and management</label>
+            <label class="choice-pill"><input type="checkbox"> Data access and interoperability</label>
+            <label class="choice-pill"><input type="checkbox"> Eligibility and claims</label>
+            <label class="choice-pill"><input type="checkbox"> Patient and member engagement</label>
+            <label class="choice-pill"><input type="checkbox"> Payment and reimbursement</label>
+            <label class="choice-pill checked"><input type="checkbox" checked> Other</label>
+          </div>
+        </div>
+        <div class="field full"><label class="field-label">If "Other", describe</label><input type="text" value="Chargemaster management and pricing integrity solutions for hospitals and health systems"></div>
+        <div class="field full"><label class="field-label">If "Other" Navigation category description</label><textarea>CPT® data licensing and renewal support for Practice Fusion and Veradigm® clinical and administrative systems.</textarea></div>
+        <div class="section-divider"></div>
+        <div class="field-grid">
+          <div class="field full">
+            <label class="field-label">Product Type<span class="req">*</span></label>
+            <div class="choice-group" data-radio-group="productType">
+              <label class="choice-pill"><input type="radio" name="productType"> API</label>
+              <label class="choice-pill"><input type="radio" name="productType"> Bundle</label>
+              <label class="choice-pill checked"><input type="radio" name="productType" checked> Data</label>
+              <label class="choice-pill"><input type="radio" name="productType"> Services</label>
+              <label class="choice-pill"><input type="radio" name="productType"> Software</label>
+              <label class="choice-pill"><input type="radio" name="productType"> Other</label>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Available to purchase on AIM?<span class="req">*</span></label>
+            <div class="choice-group" data-radio-group="purchasable">
+              <label class="choice-pill checked"><input type="radio" name="purchasable" checked> Yes</label>
+              <label class="choice-pill"><input type="radio" name="purchasable"> No</label>
+            </div>
+          </div>
+          <div class="field"><label class="field-label">Solution of Interest<span class="req">*</span><span class="field-hint">Required</span></label><input type="text" value="Optum Coding"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5 -->
+    <section class="form-card" id="sec5">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">5</div>
+          <div><div class="form-card-title">SEO</div><div class="form-card-sub">Digital Marketing Team only</div></div>
+        </div>
+        <span class="owner-badge owner-seo">Digital Marketing</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Target Audience</label><input type="text" placeholder="Who are we optimizing for?"></div>
+          <div class="field"><label class="field-label">Target Keywords</label><input type="text" placeholder="SEO keywords"></div>
+          <div class="field full"><label class="field-label">Meta Title</label><input type="text" value="CPT® Data Licensing for Practice Fusion &amp; Veradigm® Systems"></div>
+          <div class="field full"><label class="field-label">Meta Description</label><textarea>Renew or start your annual CPT® Standard Data File license for Practice Fusion and Veradigm® systems through Optum, the exclusive authorized distributor for these platforms.</textarea></div>
+          <div class="field full"><label class="field-label">Orb Image Name</label><input type="text" placeholder="Category/Product image from creative – figma board name/link"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6 -->
+    <section class="form-card" id="sec6">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">6</div>
+          <div><div class="form-card-title">AI Marketplace Web Page Content</div><div class="form-card-sub">The core hero content for the PDP</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field full"><label class="field-label">Product Name / Header<span class="req">*</span></label><input type="text" value="CPT® Data Licensing for Practice Fusion &amp; Veradigm® Systems"></div>
+        <div class="field full">
+          <label class="field-label">Short Description<span class="field-hint">One sentence elevator pitch — max 80 characters</span></label>
+          <textarea maxlength="80" data-counter="sd6" style="min-height:44px">Annual CPT® data licensing made simple for Veradigm® and Practice Fusion users.</textarea>
+          <div class="char-counter" id="sd6">79 / 80</div>
+        </div>
+        <div class="field full">
+          <label class="field-label">Overview<span class="field-hint">Max 425 characters</span></label>
+          <textarea maxlength="425" data-counter="ov6" style="min-height:100px">Optum works on behalf of the AMA as the exclusive authorized distributor and licensing agent of CPT® data for organizations using Practice Fusion and Veradigm® clinical and administrative systems. Renew or initiate your annual CPT® Standard Data File license to stay prepared for 2026 coding updates and compliant with required licensing terms.</textarea>
+          <div class="char-counter" id="ov6">344 / 425</div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Call to Action<span class="req">*</span></label><input type="text" value="Order now"></div>
+          <div class="field"><label class="field-label">Pricing<span class="field-hint">Optional</span></label><input type="text" value="Annual fee is based on the AMA Ambulatory EMR User Proxy Model using billing provider count."></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Benefits -->
+    <section class="form-card" id="sec7">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">7</div>
+          <div><div class="form-card-title">Benefits</div><div class="form-card-sub">Highlight up to 3 benefits to the customer</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body" id="benefitsList" data-max="3">
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Benefit 1</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Title</label><input type="text" value="Exclusive authorized licensing support"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>Work with Optum as the exclusive authorized distributor and licensing agent for CPT® data used in Practice Fusion and Veradigm® systems, helping your organization stay aligned with AMA licensing requirements.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Benefit 2</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Title</label><input type="text" value="Simple annual renewal process"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>If your organization previously purchased the CPT® Standard Data File from Optum, you can use the online order process to quickly renew your annual license and access the 2026 data file.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Benefit 3</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Title</label><input type="text" value="Standardized pricing model"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>Pricing is determined by the AMA Ambulatory EMR User Proxy Model, which estimates usage by multiplying the number of billing providers in the practice by four for a consistent, industry-standard licensing approach.</textarea></div>
+        </div>
+        <button class="repeat-add-btn" onclick="addBenefit()" disabled>+ Add Benefit</button>
+        <div class="repeat-limit-note">Maximum of 3 benefits</div>
+      </div>
+    </section>
+
+    <!-- Section 8: Video -->
+    <section class="form-card" id="sec8">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">8</div>
+          <div><div class="form-card-title">Video</div><div class="form-card-sub">Optional</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field-grid">
+          <div class="field full"><label class="field-label">Video Title</label><input type="text" placeholder="Name of video"></div>
+          <div class="field"><label class="field-label">Video URL</label><input type="url" placeholder="Link to hosted video"></div>
+          <div class="field"><label class="field-label">Thumbnail URL</label><input type="url" placeholder="Link to thumbnail image"></div>
+          <div class="field full"><label class="field-label">Supporting Details</label><textarea placeholder="2–4 bullets or sentences"></textarea></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 9: Modules -->
+    <section class="form-card" id="sec9">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">9</div>
+          <div><div class="form-card-title">Modules</div><div class="form-card-sub">Up to 5 modules included with the product</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body" id="modulesList" data-max="5">
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Module 1</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Module Name</label><input type="text" value="Included modules"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>CPT® Standard Data File licensing and renewal support for Practice Fusion EHR, Veradigm® Professional EHR™, Touchworks EHR, and Veradigm® Practice Management.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Module 2</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Module Name</label><input type="text" value="Practice Fusion EHR"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>Annual CPT® Standard Data File licensing required for organizations using Practice Fusion EHR.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Module 3</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Module Name</label><input type="text" value="Veradigm® Professional EHR™"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>Supports annual CPT® data file licensing for Veradigm® Professional EHR™ users.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Module 4</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Module Name</label><input type="text" value="Touchworks EHR"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>Included as a covered system requiring CPT® Standard Data File licensing renewal.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Module 5</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Module Name</label><input type="text" value="Veradigm® Practice Management"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea>Annual licensing support for CPT® data used in Veradigm® Practice Management workflows.</textarea></div>
+        </div>
+        <button class="repeat-add-btn" onclick="addModule()" disabled>+ Add Module</button>
+        <div class="repeat-limit-note">Maximum of 5 modules</div>
+      </div>
+    </section>
+
+    <!-- Section 10: Related Resources -->
+    <section class="form-card" id="sec10">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">10</div>
+          <div><div class="form-card-title">Related Resources / Outcomes</div><div class="form-card-sub">Repeat for each supporting resource</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body" id="resourcesList">
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Resource 1</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field-grid">
+            <div class="field"><label class="field-label">Type (Eyebrow)</label>
+              <select><option>Brochure</option><option>Case Study</option><option>White Paper</option><option>Webinar</option></select>
+            </div>
+            <div class="field"><label class="field-label">Headline</label><input type="text" value="Optimize revenue integrity with comprehensive chargemaster management solutions"></div>
+            <div class="field full"><label class="field-label">Copy</label><textarea>Comprehensive chargemaster management solutions to enhance coding accuracy, compliance and revenue cycle efficiency.</textarea></div>
+            <div class="field"><label class="field-label">CTA Link</label><input type="url" placeholder="Use existing brochure link"></div>
+            <div class="field"><label class="field-label">Image Link</label><input type="url" placeholder="Use existing brochure image asset"></div>
+          </div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Resource 2</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field-grid">
+            <div class="field"><label class="field-label">Type (Eyebrow)</label>
+              <select><option>Brochure</option><option selected>Case Study</option><option>White Paper</option><option>Webinar</option></select>
+            </div>
+            <div class="field"><label class="field-label">Headline</label><input type="text" value="Optum chargemaster solutions help a hospital improve..."></div>
+            <div class="field full"><label class="field-label">Copy</label><textarea>Read how Optum chargemaster solutions helped a community hospital center improve maintenance and reduce rejected claims.</textarea></div>
+            <div class="field"><label class="field-label">CTA Link</label><input type="url" placeholder="Use existing case study link"></div>
+            <div class="field"><label class="field-label">Image Link</label><input type="url" placeholder="Use existing case study image asset"></div>
+          </div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Resource 3</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field-grid">
+            <div class="field"><label class="field-label">Type (Eyebrow)</label>
+              <select><option>Brochure</option><option>Case Study</option><option selected>White Paper</option><option>Webinar</option></select>
+            </div>
+            <div class="field"><label class="field-label">Headline</label><input type="text" value="Chargemaster maintenance ensures financial viability of..."></div>
+            <div class="field full"><label class="field-label">Copy</label><textarea>Our latest white paper details successful steps to chargemaster maintenance and offers a suggested action plan.</textarea></div>
+            <div class="field"><label class="field-label">CTA Link</label><input type="url" placeholder="Use existing white paper link"></div>
+            <div class="field"><label class="field-label">Image Link</label><input type="url" placeholder="Use existing white paper image asset"></div>
+          </div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Resource 4</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field-grid">
+            <div class="field"><label class="field-label">Type (Eyebrow)</label>
+              <select><option>Brochure</option><option>Case Study</option><option>White Paper</option><option selected>Webinar</option></select>
+            </div>
+            <div class="field"><label class="field-label">Headline</label><input type="text" value="Enterprise ChargemasterExpert.com...."></div>
+            <div class="field full"><label class="field-label">Copy</label><textarea>Discover how Enterprise ChargemasterExpert.com enhances revenue cycle productivity by ensuring chargemaster accuracy and reducing claim denials.</textarea></div>
+            <div class="field"><label class="field-label">CTA Link</label><input type="url" placeholder="Use existing webinar link"></div>
+            <div class="field"><label class="field-label">Image Link</label><input type="url" placeholder="Use existing webinar image asset"></div>
+          </div>
+        </div>
+        <button class="repeat-add-btn" onclick="addResource()">+ Add Related Resource</button>
+      </div>
+    </section>
+
+    <!-- Section 11: FAQs -->
+    <section class="form-card" id="sec11">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">11</div>
+          <div><div class="form-card-title">FAQs</div><div class="form-card-sub">Repeat for 3–5 questions</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body" id="faqList" data-max="5">
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">FAQ 1</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Question</label><input type="text" value="Who must renew this annual CPT® data license?"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Answer</label><textarea>This annual renewal and corresponding licensing is required for care organizations using Practice Fusion EHR, Veradigm® Professional EHR™, Touchworks EHR, or Veradigm® Practice Management.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">FAQ 2</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Question</label><input type="text" value="What is CPT® and why is it needed?"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Answer</label><textarea>CPT® is the American Medical Association's standardized coding system for medical services and procedures, widely used to report care for reimbursement, research, utilization analysis, and healthcare documentation.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">FAQ 3</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Question</label><input type="text" value="How is pricing determined for the license?"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Answer</label><textarea>The annual fee is determined by the AMA Ambulatory EMR User Proxy Model, which approximates the number of users by multiplying the number of billing providers in the practice by four.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">FAQ 4</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Question</label><input type="text" value="What if this is my organization's first order with Optum?"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Answer</label><textarea>If it is a first-time order from Optum for your organization, or you are a first-time purchaser for an existing client organization, the page directs you to call customer service for assistance.</textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">FAQ 5</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Question</label><input type="text" value="What year of CPT® data is this page supporting?"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Answer</label><textarea>The source page is positioned to help organizations prepare for upcoming 2026 procedural coding and billing updates through the 2026 CPT® Standard Data File.</textarea></div>
+        </div>
+        <button class="repeat-add-btn" onclick="addFaq()" disabled>+ Add FAQ</button>
+        <div class="repeat-limit-note">3–5 questions</div>
+      </div>
+    </section>
+
+    <!-- Section 12: Featured & Navigation -->
+    <section class="form-card" id="sec12">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">12</div>
+          <div><div class="form-card-title">Featured Product Detail &amp; Navigation</div><div class="form-card-sub">Used on carousel, category tile, and navigation description</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body">
+        <div class="field full">
+          <label class="field-label">Product Image<span class="field-hint">465 × 253 px</span></label>
+          <div class="file-drop">📎 Drop image here or click to upload — or paste a hosted link below</div>
+          <input type="url" placeholder="Hosted image link" style="margin-top:8px">
+        </div>
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Eyebrow / Type</label><input type="text" value="Solution"></div>
+          <div class="field"><label class="field-label">Product Name</label><input type="text" value="CPT® Data Licensing for Practice Fusion &amp; Veradigm® Systems"></div>
+          <div class="field full">
+            <label class="field-label">Short Description<span class="field-hint">Max 115 characters</span></label>
+            <textarea maxlength="115" data-counter="sd12" style="min-height:44px">Annual CPT® data licensing and renewal support for Practice Fusion and Veradigm® systems.</textarea>
+            <div class="char-counter" id="sd12">89 / 115</div>
+          </div>
+          <div class="field"><label class="field-label">CTA</label><input type="text" value="Order now"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 13: Chatbot Prompts -->
+    <section class="form-card" id="sec13">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">13</div>
+          <div><div class="form-card-title">Chatbot Prompts</div><div class="form-card-sub">Optional — sample Q&amp;A pairs for the AI Marketplace assistant</div></div>
+        </div>
+        <span class="owner-badge owner-marketing">Product Marketing</span>
+      </div>
+      <div class="form-card-body" id="chatbotList" data-max="4">
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Prompt 1</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Question<span class="field-hint">Max 50 characters</span></label><input type="text" maxlength="50" placeholder="Question (≤ 50 chars)"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Answer<span class="field-hint">Max 500 characters</span></label><textarea maxlength="500" placeholder="Answer (≤ 500 chars)"></textarea></div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Prompt 2</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field"><label class="field-label">Question<span class="field-hint">Max 50 characters</span></label><input type="text" maxlength="50" placeholder="Question (≤ 50 chars)"></div>
+          <div class="field" style="margin-bottom:0"><label class="field-label">Answer<span class="field-hint">Max 500 characters</span></label><textarea maxlength="500" placeholder="Answer (≤ 500 chars)"></textarea></div>
+        </div>
+        <button class="repeat-add-btn" onclick="addChatbot()">+ Add Chatbot Prompt</button>
+        <div class="repeat-limit-note">Maximum of 4 prompts</div>
+      </div>
+    </section>
+
+    <!-- Section 14: Developer Resources -->
+    <section class="form-card" id="sec14">
+      <div class="form-card-header">
+        <div class="form-card-title-wrap">
+          <div class="form-card-num">14</div>
+          <div><div class="form-card-title">Developer Resources</div><div class="form-card-sub">Optional</div></div>
+        </div>
+        <span class="owner-badge owner-dev">Development</span>
+      </div>
+      <div class="form-card-body" id="devResourcesList">
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Resource 1</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field-grid">
+            <div class="field"><label class="field-label">Product Name</label><input type="text" value="Product information"></div>
+            <div class="field"><label class="field-label">Links</label><input type="text" value="TBD"></div>
+          </div>
+        </div>
+        <div class="repeat-row">
+          <div class="repeat-row-head"><span class="repeat-row-label">Resource 2</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>
+          <div class="field-grid">
+            <div class="field"><label class="field-label">Product Name</label><input type="text" value="Contact Optum for additional information"></div>
+            <div class="field"><label class="field-label">Links</label><input type="text" value="TBD"></div>
+          </div>
+        </div>
+        <button class="repeat-add-btn" onclick="addDevResource()">+ Add Developer Resource</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ══ STICKY ACTION BAR ═══════════════════════════════════════ -->
+<div class="sticky-actions">
+  <span class="sticky-actions-meta" id="lastSaved">Not yet saved</span>
+  <div class="sticky-actions-buttons">
+    <button class="btn btn-ghost" onclick="saveDraft()">Save Draft</button>
+    <button class="btn btn-primary" onclick="submitForReview()">Submit for Review</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Repeatable row helpers ─────────────────────────────────────── */
+function removeRow(btn) {
+  const row = btn.closest('.repeat-row');
+  const list = row.parentElement;
+  row.remove();
+  renumberRows(list);
+  syncAddButton(list);
+}
+function renumberRows(list) {
+  const rows = list.querySelectorAll('.repeat-row');
+  rows.forEach((r, i) => {
+    const label = r.querySelector('.repeat-row-label');
+    label.textContent = label.textContent.replace(/\d+$/, i + 1);
+  });
+}
+function syncAddButton(list) {
+  const max = parseInt(list.dataset.max || '999', 10);
+  const count = list.querySelectorAll('.repeat-row').length;
+  const btn = list.querySelector('.repeat-add-btn');
+  if (btn) btn.disabled = count >= max;
+}
+function makeRow(label, fieldsHtml) {
+  const row = document.createElement('div');
+  row.className = 'repeat-row';
+  row.innerHTML = `<div class="repeat-row-head"><span class="repeat-row-label">${label}</span><span class="repeat-remove" onclick="removeRow(this)">Remove</span></div>${fieldsHtml}`;
+  return row;
+}
+function insertBeforeAddBtn(list, row) {
+  const btn = list.querySelector('.repeat-add-btn');
+  list.insertBefore(row, btn);
+  syncAddButton(list);
+  attachCounters(row);
+}
+
+function addBenefit() {
+  const list = document.getElementById('benefitsList');
+  const n = list.querySelectorAll('.repeat-row').length + 1;
+  insertBeforeAddBtn(list, makeRow('Benefit ' + n, `
+    <div class="field"><label class="field-label">Title</label><input type="text" placeholder="Benefit title"></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea placeholder="Benefit description"></textarea></div>`));
+}
+function addModule() {
+  const list = document.getElementById('modulesList');
+  const n = list.querySelectorAll('.repeat-row').length + 1;
+  insertBeforeAddBtn(list, makeRow('Module ' + n, `
+    <div class="field"><label class="field-label">Module Name</label><input type="text" placeholder="Module name"></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Description</label><textarea placeholder="Module description"></textarea></div>`));
+}
+function addFaq() {
+  const list = document.getElementById('faqList');
+  const n = list.querySelectorAll('.repeat-row').length + 1;
+  insertBeforeAddBtn(list, makeRow('FAQ ' + n, `
+    <div class="field"><label class="field-label">Question</label><input type="text" placeholder="Question"></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Answer</label><textarea placeholder="Answer"></textarea></div>`));
+}
+function addChatbot() {
+  const list = document.getElementById('chatbotList');
+  const n = list.querySelectorAll('.repeat-row').length + 1;
+  insertBeforeAddBtn(list, makeRow('Prompt ' + n, `
+    <div class="field"><label class="field-label">Question<span class="field-hint">Max 50 characters</span></label><input type="text" maxlength="50" placeholder="Question (≤ 50 chars)"></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Answer<span class="field-hint">Max 500 characters</span></label><textarea maxlength="500" placeholder="Answer (≤ 500 chars)"></textarea></div>`));
+}
+function addResource() {
+  const list = document.getElementById('resourcesList');
+  const n = list.querySelectorAll('.repeat-row').length + 1;
+  insertBeforeAddBtn(list, makeRow('Resource ' + n, `
+    <div class="field-grid">
+      <div class="field"><label class="field-label">Type (Eyebrow)</label>
+        <select><option>Brochure</option><option>Case Study</option><option>White Paper</option><option>Webinar</option></select>
+      </div>
+      <div class="field"><label class="field-label">Headline</label><input type="text" placeholder="Headline"></div>
+      <div class="field full"><label class="field-label">Copy</label><textarea placeholder="Copy"></textarea></div>
+      <div class="field"><label class="field-label">CTA Link</label><input type="url" placeholder="CTA link"></div>
+      <div class="field"><label class="field-label">Image Link</label><input type="url" placeholder="Image link"></div>
+    </div>`));
+}
+function addDevResource() {
+  const list = document.getElementById('devResourcesList');
+  const n = list.querySelectorAll('.repeat-row').length + 1;
+  insertBeforeAddBtn(list, makeRow('Resource ' + n, `
+    <div class="field-grid">
+      <div class="field"><label class="field-label">Product Name</label><input type="text" placeholder="Product name"></div>
+      <div class="field"><label class="field-label">Links</label><input type="text" placeholder="Links"></div>
+    </div>`));
+}
+
+/* ── Character counters ─────────────────────────────────────────── */
+function attachCounters(scope) {
+  scope.querySelectorAll('textarea[maxlength], input[maxlength]').forEach(el => {
+    if (el.dataset.counterBound) return;
+    el.dataset.counterBound = '1';
+    const counterId = el.dataset.counter;
+    const counterEl = counterId ? document.getElementById(counterId) : null;
+    if (!counterEl) return;
+    const update = () => {
+      const max = parseInt(el.getAttribute('maxlength'), 10);
+      const len = el.value.length;
+      counterEl.textContent = len + ' / ' + max;
+      counterEl.classList.toggle('over', len > max);
+    };
+    el.addEventListener('input', update);
+    update();
+  });
+}
+attachCounters(document);
+
+/* ── Choice pill visual state ───────────────────────────────────── */
+document.querySelectorAll('.choice-pill input').forEach(input => {
+  input.addEventListener('change', function() {
+    if (this.type === 'radio') {
+      document.querySelectorAll(`input[name="${this.name}"]`).forEach(sib => {
+        sib.closest('.choice-pill').classList.toggle('checked', sib.checked);
+      });
+    } else {
+      this.closest('.choice-pill').classList.toggle('checked', this.checked);
+    }
+  });
+});
+
+/* ── Section nav: scrollspy + click-to-scroll ───────────────────── */
+const navItems = Array.from(document.querySelectorAll('.section-nav-item'));
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    document.getElementById(item.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+const sections = navItems.map(i => document.getElementById(i.dataset.target));
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const idx = sections.indexOf(entry.target);
+    if (idx === -1) return;
+    if (entry.isIntersecting) {
+      navItems.forEach(i => i.classList.remove('active'));
+      navItems[idx].classList.add('active');
+    }
+  });
+}, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+sections.forEach(s => observer.observe(s));
+
+/* ── Completion progress (based on filled required-ish inputs) ──── */
+function updateProgress() {
+  const allInputs = document.querySelectorAll('.form-main input[type="text"], .form-main input[type="url"], .form-main textarea');
+  let filled = 0;
+  allInputs.forEach(el => { if (el.value.trim().length > 0) filled++; });
+  const pct = Math.min(100, Math.round((filled / allInputs.length) * 100));
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  navItems.forEach(item => {
+    const section = document.getElementById(item.dataset.target);
+    const inputs = section.querySelectorAll('input[type="text"], input[type="url"], textarea');
+    const anyFilled = Array.from(inputs).some(el => el.value.trim().length > 0);
+    item.classList.toggle('done', anyFilled);
+  });
+}
+document.querySelectorAll('.form-main input, .form-main textarea').forEach(el => {
+  el.addEventListener('input', updateProgress);
+});
+updateProgress();
+
+/* ── Toast + actions ─────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function saveDraft() {
+  const now = new Date().toLocaleString();
+  document.getElementById('lastSaved').textContent = 'Draft saved ' + now;
+  showToast('Draft saved');
+}
+function submitForReview() {
+  showToast('Submitted for review — routed to Product Marketing');
+}
+</script>
+</body>
+</html>
